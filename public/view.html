@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Student</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <h2 align="center">View Student</h2>
+    <form>
+
+        <label for="student_id">Student ID</label>
+        <input id="student_id" name="student_id" readonly placeholder="Student ID" title="Student ID">
+
+        <label for="full_name">Full Name</label>
+        <input id="full_name" name="full_name" readonly placeholder="Full Name" title="Full Name">
+
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" readonly placeholder="Email" title="Email">
+
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" readonly placeholder="Phone" title="Phone">
+
+        <label for="dob">Date of Birth</label>
+        <input id="dob" name="dob" type="date" readonly placeholder="Date of Birth" title="Date of Birth">
+
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender" disabled title="Gender">
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+
+        <label for="course">Course</label>
+        <textarea id="course" name="course" readonly placeholder="Course" title="Course"></textarea>
+
+        <label for="status">Status</label>
+        <select id="status" name="status" disabled title="Status">
+            <option>Active</option>
+            <option>Inactive</option>
+        </select>
+        <button type="button" onclick="window.history.back();">Back</button>
+    </form>
+
+    <script>
+        const url = new URLSearchParams(window.location.search);
+        const id = url.get('id');
+        fetch('/students')
+            .then(res => res.json())
+            .then(data => {
+                const student = data.find(s => s.id == id);
+                const form = document.forms[0];
+                if (student) {
+                    form.id.value = student.id;
+                    form.student_id.value = student.student_id;
+                    form.full_name.value = student.full_name;
+                    form.email.value = student.email;
+                    form.phone.value = student.phone;
+                    const dobDate = new Date(student.dob);
+            if (!isNaN(dobDate)) {
+                form.dob.value = dobDate.toISOString().split('T')[0];
+            } else {
+                form.dob.value = student.dob;
+            }
+                    form.gender.value = student.gender;
+                    form.course.value = student.course;
+                    form.status.value = student.status;
+                }
+            });
+    </script>
+</body>
+</html>

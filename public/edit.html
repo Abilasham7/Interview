@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Student</title>
+    <link rel="stylesheet" href="/style.css">
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('editForm');
+        form.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const phone = document.getElementById('phone').value.trim();
+          const email = document.getElementById('email').value.trim();
+          const phoneRegex = /^\d{10}$/;
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+          if (!phoneRegex.test(phone)) {
+            alert('Phone number must be exactly 10 digits.');
+            return;
+          }
+          if (!emailRegex.test(email)) {
+            alert('Please enter a valid email address.');
+            return;
+          }
+          form.submit();
+        });
+      });
+    </script>
+</head>
+<body>
+    <h2 align=center>Edit Student</h2>
+    <form id="editForm" method="POST">
+
+        
+        <label for="student_id">Student ID</label>
+        <input id="student_id" name="student_id" required placeholder="Student ID" title="Student ID">
+
+        <label for="full_name">Full Name</label>
+        <input id="full_name" name="full_name" required placeholder="Enter full name" title="Full Name">
+        
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required placeholder="Enter email address" title="Email">
+        
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" required placeholder="Enter phone number" title="Phone">
+        
+        <label for="dob">Date of Birth</label>
+        <input id="dob" name="dob" type="date" required placeholder="Select date of birth" title="Date of Birth">
+        
+        <label for="gender">Gender</label>
+        <select id="gender" name="gender" required title="Gender">
+            <option value="">Select gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+        </select>
+        
+        <label for="course">Course</label>
+        <textarea id="course" name="course" required placeholder="Enter course" title="Course"></textarea>
+        
+        <label for="status">Status</label>
+        <select id="status" name="status" required title="Status">
+            <option value=""></option>
+            <option>Active</option>
+            <option>Inactive</option>
+        </select>
+        <button type="submit">Update</button>
+        <button type="button" onclick="window.history.back();">Back</button>
+    </form>
+
+    <script>
+        const url = new URLSearchParams(window.location.search);
+        const id = url.get('id');
+        fetch('/students')
+            .then(res => res.json())
+            .then(data => {
+                const student = data.find(s => s.id == id);
+                const form = document.forms[0];
+                form.action = '/update/' + id;
+                if (student) {
+            form.id.value = student.id;
+            form.student_id.value = student.student_id;
+            form.full_name.value = student.full_name;
+            form.email.value = student.email;
+            form.phone.value = student.phone;
+            const dobDate = new Date(student.dob);
+            if (!isNaN(dobDate)) {
+                form.dob.value = dobDate.toISOString().split('T')[0];
+            } else {
+                form.dob.value = student.dob;
+            }
+            form.gender.value = student.gender;
+            form.course.value = student.course;
+            form.status.value = student.status;
+        }
+    });
+    </script>
+</body>
+</html>
